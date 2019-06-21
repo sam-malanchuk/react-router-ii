@@ -1,8 +1,14 @@
 import React from "react";
-import items from "../data";
+import { Route, NavLink } from "react-router-dom";
+import TricketDescription from "./TrinketDescription";
+import TricketShipping from "./TricketShipping";
 
 export default function(props) {
-  const item = items.find(i => String(i.id) === props.match.params.id);
+  const item = props.items.find(i => String(i.id) === props.match.params.id);
+
+  if (!item) {
+    return <div>Loading...</div>;
+  };
 
   return (
     <div className="item-wrapper">
@@ -15,8 +21,19 @@ export default function(props) {
           <h2>{item.name}</h2>
           <h4>${item.price}</h4>
         </div>
-      </div>
-      <p className="item-description">{item.description}</p>
+    </div>
+
+    <nav>
+      <NavLink to={props.match.url}>Description</NavLink>
+      <NavLink to={`${props.match.url}/shipping`}>Shipping</NavLink>
+    </nav>
+
+      <Route path={props.match.path} exact render={() => {
+        return <TricketDescription description={item.description} />
+      }} />
+      <Route path={`${props.match.path}/shipping`} render={() => {
+        return <TricketShipping shipping={item.shipping} />
+      }} />
     </div>
   );
-}
+};
